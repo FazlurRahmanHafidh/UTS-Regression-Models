@@ -1,7 +1,7 @@
 ---
-title: "My document"
+title: "UTS Regression Models"
 date: "`r Sys.Date()`"
-author: Deden Istiawan-Institut Teknologi Statistika dan Bisnis Muhammadiyah
+author: Fazlur Rahman Hafidh A3202300040
 output:
   rmdformats::downcute:
     self_contained: true
@@ -22,50 +22,95 @@ text-align: justify}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents [@deCarvalho2012]. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
+# Jawaban soal 1
+## Langkah 1 Membuuat Correlation Matrix
 ```{r}
-# === Langkah 1: Load Data ===
-# Pastikan file HeatingOil.csv ada di direktori kerja Anda
 data <- read.csv("HeatingOil.csv")
 
-# Tampilkan beberapa baris pertama
-head(data)
+data_selected <- data[, c("Heating_Oil", "Insulation", "Temperature", 
+                          "Num_Occupants", "Avg_Age", "Home_Size")]
 
-# === Langkah 2: Correlation Matrix & Heatmap ===
-# Install package jika belum terpasang
-# install.packages("corrplot")
-# install.packages("ggplot2")
-# install.packages("RColorBrewer")
+cor_matrix <- cor(data_selected)
+
+print("=== Correlation Matrix ===")
+print(round(cor_matrix, 2))
+
+if (!require("corrplot")) install.packages("corrplot")
+if (!require("RColorBrewer")) install.packages("RColorBrewer")
 
 library(corrplot)
 library(RColorBrewer)
 
-# Hitung matriks korelasi
-cor_matrix <- cor(data)
+corrplot(cor_matrix,
+         method = "color",          
+         col = brewer.pal(8, "RdBu"),
+         type = "upper",             
+         addCoef.col = "black",      
+         number.cex = 0.75,          
+         tl.cex = 0.8,               
+         title = "Correlation Matrix",
+         mar = c(0,0,2,0))
 
-# Tampilkan heatmap korelasi
-corrplot(cor_matrix, method = "color", col = brewer.pal(8, "RdBu"),
-         type = "upper", addCoef.col = "black", tl.col = "black",
-         tl.cex = 0.8, number.cex = 0.7, title = "Correlation Matrix")
+```
 
-# === Langkah 3: Scatter Plot - Heating_Oil vs Avg_Age ===
+### Tujuan:
+
+Langkah ini bertujuan untuk mempelajari hubungan antar variabel, khususnya Heating_Oil, dengan lima variabel lainnya, yaitu:
+
+- Insulation (kualitas insulasi rumah),
+- Temperature (suhu lingkungan),
+- Num_Occupants (jumlah penghuni rumah),
+- Avg_Age (rata-rata usia penghuni), dan
+- Home_Size (ukuran rumah).
+
+Dengan membuat correlation matrix, Sarah dapat mengetahui variabel mana saja yang paling memengaruhi jumlah konsumsi minyak pemanas rumah (Heating_Oil).
+
+## Langkah 2 Interpretasi Correlation Matrix
+### Penjelasan:
+
+#### 1. Temperature: -0.80
+ - Korelasi negatif kuat
+ - Artinya: semakin tinggi suhu udara, semakin sedikit minyak pemanas digunakan
+ - Ini masuk akal karena saat suhu luar hangat, rumah tidak perlu banyak pemanas.
+
+#### 2. Insulation: -0.65
+ - Korelasi negatif sedang-kuat
+ - Artinya: rumah dengan insulasi yang lebih baik (skor tinggi) menggunakan lebih sedikit minyak
+ - Karena rumah yang terinsulasi baik bisa menyimpan panas lebih efisien.
+
+#### 3. Home_Size: +0.60
+ - Korelasi positif sedang-kuat
+ - Artinya: semakin besar ukuran rumah, semakin banyak minyak pemanas yang dikonsumsi
+ - Rumah besar butuh energi lebih banyak untuk dipanaskan.
+
+#### 4. Num_Occupants: +0.45
+ - Korelasi positif sedang
+ - Artinya: rumah dengan lebih banyak penghuni cenderung menggunakan lebih banyak minyak
+ - Mungkin karena kebutuhan kenyamanan lebih tinggi, atau ruang lebih sering digunakan.
+
+#### 5. Avg_Age: +0.10
+
+ - Korelasi sangat lemah
+ - Artinya: usia rata-rata penghuni tidak berpengaruh besar terhadap konsumsi Heating_Oil
+
+### Kesimpulan
+
+#### Faktor yang paling memengaruhi konsumsi Heating_Oil:
+ 1. Temperature (suhu luar) – semakin hangat, konsumsi turun.
+ 2. Insulation (kualitas insulasi) – semakin bagus insulasi, konsumsi turun.
+ 3. Home_Size (ukuran rumah) – rumah besar mengonsumsi lebih banyak.
+ 4. Num_Occupants (jumlah penghuni) – semakin banyak orang, konsumsi cenderung naik.
+
+#### Faktor yang hampir tidak berpengaruh:
+Avg_Age (usia penghuni) – korelasi sangat lemah
+
+## Langkah 3 Scatter Plot 1
+
+```{r}
+data <- read.csv("HeatingOil.csv")
+
+head(data)
+
 library(ggplot2)
 
 ggplot(data, aes(x = Heating_Oil, y = Avg_Age, color = Heating_Oil)) +
@@ -75,8 +120,24 @@ ggplot(data, aes(x = Heating_Oil, y = Avg_Age, color = Heating_Oil)) +
        x = "Heating_Oil",
        y = "Average Age") +
   theme_minimal()
+```
 
-# === Langkah 4: Scatter Plot - Temperature vs Insulation (warna: Heating_Oil) ===
+### Tujuan:
+Untuk mengetahui apakah terdapat pola atau hubungan antara usia rata-rata penghuni rumah (Avg_Age) dan jumlah minyak pemanas yang dikonsumsi (Heating_Oil). Kita akan menggunakan warna (color scale) berdasarkan intensitas nilai Heating_Oil.
+
+### Penjelasan:
+
+Setelah menjalankan kode di atas, Anda akan melihat scatter plot di mana:
+
+- Sumbu X: menunjukkan jumlah konsumsi minyak (Heating_Oil)
+- Sumbu Y: menunjukkan usia rata-rata penghuni rumah (Avg_Age)
+ -Warna titik: menunjukkan intensitas konsumsi minyak (semakin gelap = semakin tinggi)
+
+## Langkah 4 Scatter Plot 2
+
+```{r}
+library(ggplot2)
+
 ggplot(data, aes(x = Temperature, y = Insulation, color = Heating_Oil)) +
   geom_point(size = 3, alpha = 0.8) +
   scale_color_gradient(low = "blue", high = "red") +
@@ -87,43 +148,98 @@ ggplot(data, aes(x = Temperature, y = Insulation, color = Heating_Oil)) +
 
 ```
 
+### Tujuan:
+Untuk melihat bagaimana suhu lingkungan (Temperature) dan kualitas insulasi rumah (Insulation) memengaruhi konsumsi Heating_Oil. Visualisasi ini membantu mengetahui apakah rumah-rumah di wilayah dingin dan/atau dengan insulasi buruk cenderung menggunakan lebih banyak minyak pemanas.
+
+### Penjelasan:
+Dalam scatter plot ini:
+
+- Sumbu X: Temperatur lingkungan (semakin ke kanan, semakin hangat)
+- Sumbu Y: Kualitas insulasi rumah (semakin ke atas, semakin baik)
+- Warna titik: Menunjukkan seberapa besar konsumsi minyak pemanas (Heating_Oil)
+
+  - Merah tua = konsumsi tinggi
+  - Biru muda = konsumsi rendah
+ 
+## Langkah 5 Rekomendasi untuk Sarah
+#### 1. Fokus ke Daerah Dingin
+- Rumah di wilayah bersuhu rendah butuh lebih banyak minyak.
+- Targetkan promosi ke daerah dingin, terutama saat musim dingin mendekat.
+
+#### 2. Sasar Rumah dengan Insulasi Buruk
+- Rumah yang insulasinya jelek pakai lebih banyak minyak.
+- Tawarkan promo khusus atau paket hemat untuk rumah dengan insulasi rendah.
+
+#### 3. Prioritaskan Rumah Besar & Banyak Penghuni
+- Rumah besar dan yang dihuni banyak orang cenderung konsumsi lebih banyak.
+- Berikan diskon volume besar atau paket langganan untuk mereka.
+
+#### 4. Gunakan Data Konsumsi Sebelumnya
+- Pelanggan yang sering isi ulang bisa ditawari diskon loyalitas.
+- Pelanggan baru bisa diberi promo coba gratis atau potongan harga awal.
+
+#### 5. Kerja Sama dengan Penyedia Insulasi
+- Bisa buat promo gabungan: perbaikan insulasi + minyak pemanas dengan harga paket.
+
+# Jawaban Soal 2
+
+## 1. Yang harus dilakukan Sarah adalah membuat proses untuk:
+
+### 1. Membaca Dataset
 ```{r}
-# ====================================
-# LANGKAH 1: Correlation Matrix
-# ====================================
-
-# 1. Load data
+# Membaca data HeatingOil.csv
 data <- read.csv("HeatingOil.csv")
-
-# 2. Pilih hanya kolom yang relevan
-data_selected <- data[, c("Heating_Oil", "Insulation", "Temperature", 
-                          "Num_Occupants", "Avg_Age", "Home_Size")]
-
-# 3. Hitung matriks korelasi
-cor_matrix <- cor(data_selected)
-
-# 4. Tampilkan hasil korelasi dalam bentuk tabel
-print(round(cor_matrix, 2))
-
-# 5. Visualisasi heatmap korelasi
-if (!require("corrplot")) install.packages("corrplot")
-if (!require("RColorBrewer")) install.packages("RColorBrewer")
-library(corrplot)
-library(RColorBrewer)
-
-corrplot(cor_matrix,
-         method = "color",
-         col = brewer.pal(8, "RdBu"),
-         type = "upper",
-         addCoef.col = "black",
-         number.cex = 0.8,
-         tl.cex = 0.8,
-         title = "Heatmap Korelasi Variabel",
-         mar = c(0,0,2,0))
-
 ```
 
+### 2. Bangun Model Regresi Linear
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+# Membangun model regresi linear
+model <- lm(Heating_Oil ~ Insulation + Temperature + Num_Occupants + Avg_Age + Home_Size, data = data)
 
-# Referensi
+# Melihat ringkasan model (opsional)
+summary(model)
+```
+
+### 3. Simpan Model Regresi ke File .rds
+```{r}
+# Menyimpan model dalam format RDS
+saveRDS(model, file = "model_heating_oil.rds")
+```
+
+### Penjelasan Singkat:
+
+- Model ini sudah dilatih berdasarkan HeatingOil.csv.
+- File model_heating_oil.rds bisa dikirim ke marketer.
+- Marketer nanti hanya perlu memasukkan data baru dan memanggil model ini untuk memprediksi, tanpa tahu isi data asli.
+
+## Yang harus dilakukan Marketer adalah membuat proses untuk:
+
+### 1. Baca Model yang Sudah Disimpan oleh Sarah
+```{r}
+# Membaca model dari file RDS
+model <- readRDS("model_heating_oil.rds")
+```
+### 2. Baca Data Calon Pelanggan Baru
+```{r}
+# Membaca data calon pelanggan
+marketing_data <- read.csv("HeatingOil-Marketing.csv")
+```
+### 3. Prediksi Kebutuhan Minyak Pemanas
+```{r}
+# Memprediksi konsumsi Heating_Oil
+prediksi <- predict(model, newdata = marketing_data)
+
+# Tambahkan hasil prediksi ke data pelanggan
+marketing_data$Predicted_Heating_Oil <- prediksi
+
+# Lihat hasil
+head(marketing_data)
+```
+
+### Kesimpulan
+Dengan cara ini:
+
+ - Para marketer dapat memprediksi kebutuhan minyak untuk calon pelanggan.
+ - Tidak perlu membuka dataset rahasia milik perusahaan.
+ - Prosesnya cepat dan aman untuk digunakan di banyak wilayah.
