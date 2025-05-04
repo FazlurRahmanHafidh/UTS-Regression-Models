@@ -87,6 +87,42 @@ ggplot(data, aes(x = Temperature, y = Insulation, color = Heating_Oil)) +
 
 ```
 
+```{r}
+# ====================================
+# LANGKAH 1: Correlation Matrix
+# ====================================
+
+# 1. Load data
+data <- read.csv("HeatingOil.csv")
+
+# 2. Pilih hanya kolom yang relevan
+data_selected <- data[, c("Heating_Oil", "Insulation", "Temperature", 
+                          "Num_Occupants", "Avg_Age", "Home_Size")]
+
+# 3. Hitung matriks korelasi
+cor_matrix <- cor(data_selected)
+
+# 4. Tampilkan hasil korelasi dalam bentuk tabel
+print(round(cor_matrix, 2))
+
+# 5. Visualisasi heatmap korelasi
+if (!require("corrplot")) install.packages("corrplot")
+if (!require("RColorBrewer")) install.packages("RColorBrewer")
+library(corrplot)
+library(RColorBrewer)
+
+corrplot(cor_matrix,
+         method = "color",
+         col = brewer.pal(8, "RdBu"),
+         type = "upper",
+         addCoef.col = "black",
+         number.cex = 0.8,
+         tl.cex = 0.8,
+         title = "Heatmap Korelasi Variabel",
+         mar = c(0,0,2,0))
+
+```
+
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
