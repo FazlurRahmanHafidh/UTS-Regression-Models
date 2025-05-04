@@ -40,6 +40,54 @@ You can also embed plots, for example:
 plot(pressure)
 ```
 
+```{r}
+# === Langkah 1: Load Data ===
+# Pastikan file HeatingOil.csv ada di direktori kerja Anda
+data <- read.csv("HeatingOil.csv")
+
+# Tampilkan beberapa baris pertama
+head(data)
+
+# === Langkah 2: Correlation Matrix & Heatmap ===
+# Install package jika belum terpasang
+# install.packages("corrplot")
+# install.packages("ggplot2")
+# install.packages("RColorBrewer")
+
+library(corrplot)
+library(RColorBrewer)
+
+# Hitung matriks korelasi
+cor_matrix <- cor(data)
+
+# Tampilkan heatmap korelasi
+corrplot(cor_matrix, method = "color", col = brewer.pal(8, "RdBu"),
+         type = "upper", addCoef.col = "black", tl.col = "black",
+         tl.cex = 0.8, number.cex = 0.7, title = "Correlation Matrix")
+
+# === Langkah 3: Scatter Plot - Heating_Oil vs Avg_Age ===
+library(ggplot2)
+
+ggplot(data, aes(x = Heating_Oil, y = Avg_Age, color = Heating_Oil)) +
+  geom_point(size = 3, alpha = 0.8) +
+  scale_color_gradient(low = "blue", high = "yellow") +
+  labs(title = "Heating_Oil vs Avg_Age",
+       x = "Heating_Oil",
+       y = "Average Age") +
+  theme_minimal()
+
+# === Langkah 4: Scatter Plot - Temperature vs Insulation (warna: Heating_Oil) ===
+ggplot(data, aes(x = Temperature, y = Insulation, color = Heating_Oil)) +
+  geom_point(size = 3, alpha = 0.8) +
+  scale_color_gradient(low = "blue", high = "red") +
+  labs(title = "Temperature vs Insulation (Colored by Heating_Oil)",
+       x = "Temperature",
+       y = "Insulation") +
+  theme_minimal()
+
+```
+
+
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
 # Referensi
