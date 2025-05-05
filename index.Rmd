@@ -1,14 +1,11 @@
 ---
-title: "UTS Regression Models"
-date: "`r Sys.Date()`"
+title: UTS Regression MOdels
 author: Fazlur Rahman Hafidh A3202300040
+date: "`r Sys.Date()`"
 output:
-  rmdformats::downcute:
-    self_contained: true
-    thumbnails: true
-    lightbox: true
-    gallery: false
-    highlight: tango
+  prettydoc::html_pretty:
+    theme: hpstr
+    highlight: github
 bibliography: references.bib
 ---
 
@@ -23,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Jawaban soal 1
-## Langkah 1 Membuuat Correlation Matrix
+## Langkah 1 MembSuat Correlation Matrix
 ```{r}
 data <- read.csv("HeatingOil.csv")
 
